@@ -59,7 +59,7 @@ export function ChatInterface({
 
   if (!document) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center bg-background p-8">
+      <div className="flex flex-1 flex-col items-center justify-center bg-transparent p-8">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-accent">
           <FileText className="h-10 w-10 text-accent-foreground" />
         </div>
@@ -75,7 +75,7 @@ export function ChatInterface({
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-background">
+    <div className="flex flex-1 flex-col bg-transparent">
       {/* Header */}
       <div className="flex items-center gap-3 border-b border-border px-6 py-4">
         <div
