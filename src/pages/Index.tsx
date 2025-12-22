@@ -111,7 +111,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-accent/20">
       {/* Sidebar */}
       <DocumentSidebar
         documents={documents}

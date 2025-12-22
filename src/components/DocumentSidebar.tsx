@@ -48,7 +48,7 @@ export function DocumentSidebar({
   };
 
   return (
-    <div className="flex h-full w-72 flex-col border-r border-border bg-card">
+    <div className="flex h-full w-72 flex-col border-r border-border bg-card/80 backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-4">
         <h2 className="font-display text-lg font-semibold text-foreground">
