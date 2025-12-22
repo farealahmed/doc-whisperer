@@ -52,8 +52,8 @@ const Welcome = () => {
               context-aware answers with source citations in seconds.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            {/* CTA Button */}
+            <div className="mt-10">
               <Button 
                 size="lg" 
                 onClick={() => navigate("/app")}
@@ -61,14 +61,6 @@ const Welcome = () => {
               >
                 Get Started
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="gap-2 px-8 py-6 text-base border-primary/20 hover:bg-primary/5 hover:border-primary/30"
-              >
-                <MessageSquare className="h-4 w-4" />
-                Watch Demo
               </Button>
             </div>
           </div>
