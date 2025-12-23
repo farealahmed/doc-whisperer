@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.9</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.docwhisperer</groupId>
+	<artifactId>backend</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>backend</name>
+	<description>Demo project for Spring Boot</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>21</java.version>
+		<langchain4j.version>0.30.0</langchain4j.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+<!--### 1. AI & RAG Capabilities (LangChain4j)
+We are using LangChain4j , which is the Java version of the popular LangChain library. It simplifies working with LLMs.
+
+- langchain4j-spring-boot-starter :
+  
+  - What : The core integration with Spring Boot.
+  - Why : It allows us to auto-configure AI components just like any other Spring bean, making the code clean and easy to manage.
+- langchain4j-open-ai-spring-boot-starter :
+  
+  - What : Connects to OpenAI's GPT models.
+  - Why : This is the "brain" that will answer the user's questions. (Note: We can swap this for Ollama if you want to run the LLM locally for free later).
+- langchain4j-embeddings-all-minilm-l6-v2 :
+  
+  - What : An "Embedding Model" that runs inside your Java application .
+  - Why : When you upload a PDF, we need to convert the text into numbers (vectors) so the computer can understand "meaning." This specific model is small, fast, and runs locally—so you don't have to pay OpenAI for embeddings!
+- langchain4j-pgvector :
+  
+  - What : A connector for PostgreSQL's pgvector extension.
+  - Why : This allows us to store the "vectors" (created by the embedding model) directly in your Postgres database. When a user asks a question, we use this to find the most relevant pages in your PDF.
+### 2. Document Processing (Apache Tika)
+- tika-core & tika-parsers-standard-package :
+  - What : The industry standard for file parsing.
+  - Why : You mentioned uploading PDFs and DOCX files. Tika is the tool that reads these binary files and extracts the plain text from them so our AI can read it. It handles almost any file format automatically.
+  -->
+
+		<!-- AI / RAG Dependencies -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-spring-boot-starter</artifactId>
+			<version>${langchain4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+			<version>${langchain4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
+			<version>${langchain4j.version}</version>
+		</dependency>
+				<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-pgvector</artifactId>
+			<version>${langchain4j.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-document-parser-apache-tika</artifactId>
+            <version>${langchain4j.version}</version>
+        </dependency>
+
+		<!-- Document Parsing -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>2.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers-standard-package</artifactId>
+			<version>2.9.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,8 @@
+com/docwhisperer/backend/documents/Document.class
+com/docwhisperer/backend/services/ChatAgent.class
+com/docwhisperer/backend/controllers/DocumentController.class
+com/docwhisperer/backend/BackendApplication.class
+com/docwhisperer/backend/controllers/ChatController.class
+com/docwhisperer/backend/services/DocumentService.class
+com/docwhisperer/backend/config/ChatConfiguration.class
+com/docwhisperer/backend/repositories/DocumentRepository.class
