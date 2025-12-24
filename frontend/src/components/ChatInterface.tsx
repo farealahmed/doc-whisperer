@@ -8,9 +8,13 @@ import { Document, Message } from "@/types/document";
 import { cn } from "@/lib/utils";
 
 interface ChatInterfaceProps {
+  /** The currently selected document context */
   document: Document | null;
+  /** List of chat messages to display */
   messages: Message[];
+  /** Callback to send a new message */
   onSendMessage: (content: string) => void;
+  /** Whether the AI is currently processing a response */
   isLoading: boolean;
 }
 
@@ -21,6 +25,13 @@ const suggestedQuestions = [
   "List all mentioned figures or statistics",
 ];
 
+/**
+ * Chat Interface Component.
+ * <p>
+ * Displays the chat history and an input area for the user to ask questions.
+ * Handles auto-scrolling to the latest message.
+ * </p>
+ */
 export function ChatInterface({
   document,
   messages,

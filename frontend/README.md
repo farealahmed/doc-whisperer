@@ -1,73 +1,96 @@
-# Welcome to your Lovable project
+# Doc-Whisperer Frontend
 
-## Project info
+This is the frontend application for Doc-Whisperer, a full-stack PDF/DOCX chat application. It allows users to upload documents and chat with them using an AI-powered backend.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Features
 
-## How can I edit this code?
+-   **Document Management**: Upload, view, and delete PDF and text documents.
+-   **Interactive Chat**: Chat with your documents using an LLM-powered assistant.
+-   **Responsive Design**: Built with a modern, responsive UI using Tailwind CSS and shadcn/ui.
+-   **Real-time Updates**: Instant feedback on document processing and chat responses.
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+-   **Framework**: [React](https://react.dev/) with [TypeScript](https://www.typescriptlang.org/)
+-   **Build Tool**: [Vite](https://vitejs.dev/)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+-   **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+-   **Icons**: [Lucide React](https://lucide.dev/)
+-   **Routing**: [React Router](https://reactrouter.com/)
+-   **State Management/Data Fetching**: [TanStack Query](https://tanstack.com/query/latest)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 📋 Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+-   Node.js (v18 or higher recommended)
+-   npm (comes with Node.js)
+-   The Doc-Whisperer Backend running on port 8080
 
-**Use your preferred IDE**
+## ⚡ Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1.  **Navigate to the frontend directory:**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+    ```bash
+    cd frontend
+    ```
 
-Follow these steps:
+2.  **Install dependencies:**
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+    ```bash
+    npm install
+    ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3.  **Run the development server:**
 
-# Step 3: Install the necessary dependencies.
-npm i
+    ```bash
+    npm run dev
+    ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+    The application will be available at `http://localhost:5173`.
+
+## 📜 Scripts
+
+-   `npm run dev`: Starts the development server.
+-   `npm run build`: Builds the application for production.
+-   `npm run preview`: Preview the production build locally.
+-   `npm run lint`: Runs ESLint to check for code quality issues.
+
+## 📂 Project Structure
+
+```
+frontend/
+├── src/
+│   ├── components/     # Reusable UI components
+│   │   ├── ui/         # shadcn/ui base components
+│   │   └── ...         # Feature-specific components (ChatInterface, DocumentSidebar, etc.)
+│   ├── hooks/          # Custom React hooks (e.g., use-toast)
+│   ├── lib/            # Utility functions (utils.ts)
+│   ├── pages/          # Application pages (Index, Welcome, NotFound)
+│   ├── services/       # API integration (api.ts)
+│   ├── types/          # TypeScript type definitions
+│   ├── App.tsx         # Main application component with routing
+│   └── main.tsx        # Entry point
+├── public/             # Static assets
+├── index.html          # HTML entry point
+├── package.json        # Project dependencies and scripts
+├── tailwind.config.ts  # Tailwind CSS configuration
+├── tsconfig.json       # TypeScript configuration
+└── vite.config.ts      # Vite configuration (includes proxy setup)
 ```
 
-**Edit a file directly in GitHub**
+## 🔌 API Integration
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The frontend is configured to proxy API requests to the backend. Ensure your backend is running on `http://localhost:8080`. The proxy configuration can be found in `vite.config.ts`.
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```typescript
+// vite.config.ts
+server: {
+  host: "::",
+  port: 5173,
+  proxy: {
+    '/api': {
+      target: 'http://localhost:8080',
+      changeOrigin: true,
+    }
+  }
+}
+```

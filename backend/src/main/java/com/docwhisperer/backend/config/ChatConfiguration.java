@@ -14,13 +14,43 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+/**
+ * Configuration class for the RAG (Retrieval-Augmented Generation) pipeline.
+ * <p>
+ * This class defines the necessary Spring beans to set up LangChain4j, including:
+ * <ul>
+ *     <li>{@link EmbeddingModel}: Converts text into vector embeddings.</li>
+ *     <li>{@link ChatAgent}: The AI service interface that interacts with the LLM.</li>
+ *     <li>{@link ContentRetriever}: Logic for finding relevant document chunks in the vector store.</li>
+ * </ul>
+ * </p>
+ */
 public class ChatConfiguration {
 
+    /**
+     * Creates an EmbeddingModel bean using the "AllMiniLmL6V2" model.
+     * This model is used to compute vector embeddings for both document chunks and user queries.
+     * It runs locally within the Java process (ONNX runtime).
+     *
+     * @return The configured EmbeddingModel.
+     */
     @Bean
     EmbeddingModel embeddingModel() {
         return new AllMiniLmL6V2EmbeddingModel();
     }
 
+    /**
+     * Creates the ChatAgent AI Service.
+     * <p>
+     * This bean wires together the Language Model (Ollama), the Vector Store (PostgreSQL/pgvector),
+     * and the Embedding Model to create a complete RAG system.
+     * </p>
+     *
+     * @param chatLanguageModel The LLM backend (configured via application.properties to use Ollama).
+     * @param embeddingStore    The vector database where document chunks are stored.
+     * @param embeddingModel    The model used to vectorize queries.
+     * @return A proxy instance of ChatAgent that handles the AI interaction logic.
+     */
     @Bean
     ChatAgent chatAgent(ChatLanguageModel chatLanguageModel, 
                         EmbeddingStore<TextSegment> embeddingStore, 

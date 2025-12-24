@@ -1,40 +1,28 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { DocumentSidebar } from "@/components/DocumentSidebar";
 import { ChatInterface } from "@/components/ChatInterface";
 import { UploadModal } from "@/components/UploadModal";
 import { Document, Message } from "@/types/document";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/services/api";
 
-// Mock data for demo
-const mockDocuments: Document[] = [
-  {
-    id: "1",
-    name: "Financial Report Q4 2024.pdf",
-    type: "pdf",
-    size: 2456000,
-    uploadedAt: new Date("2024-12-15"),
-    pageCount: 48,
-  },
-  {
-    id: "2",
-    name: "Technical Specification v2.1.docx",
-    type: "docx",
-    size: 1234000,
-    uploadedAt: new Date("2024-12-18"),
-    pageCount: 156,
-  },
-  {
-    id: "3",
-    name: "Research Paper - Machine Learning.pdf",
-    type: "pdf",
-    size: 5678000,
-    uploadedAt: new Date("2024-12-20"),
-    pageCount: 324,
-  },
-];
-
+/**
+ * Main Application Page.
+ * <p>
+ * This component acts as the primary controller for the application state.
+ * It manages:
+ * <ul>
+ *   <li>The list of documents (fetched from backend)</li>
+ *   <li>The currently selected document</li>
+ *   <li>The chat history (messages)</li>
+ *   <li>Upload modal visibility</li>
+ * </ul>
+ * It composes the Sidebar, Chat Interface, and Upload Modal components.
+ * </p>
+ */
 const Index = () => {
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments);
+  // --- State Management ---
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
@@ -42,47 +30,98 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  /**
+   * Initial Data Fetching.
+   * Loads the list of documents when the component mounts.
+   */
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    try {
+      const docs = await api.getDocuments();
+      setDocuments(docs);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load documents",
+        variant: "destructive",
+      });
+    }
+  };
+
+  /**
+   * Handles document selection from the sidebar.
+   * Resets the chat history when a new document is selected.
+   */
   const handleSelectDocument = useCallback((doc: Document) => {
     setSelectedDocument(doc);
     setMessages([]); // Reset messages when switching documents
   }, []);
 
+  /**
+   * Handles file uploads via the UploadModal.
+   * Uploads files to the backend and updates the document list.
+   */
   const handleUpload = useCallback(
-    (files: File[]) => {
-      const newDocs: Document[] = files.map((file, index) => ({
-        id: `new-${Date.now()}-${index}`,
-        name: file.name,
-        type: file.name.endsWith(".pdf") ? "pdf" : "docx",
-        size: file.size,
-        uploadedAt: new Date(),
-        pageCount: Math.floor(Math.random() * 200) + 50,
-      }));
-
-      setDocuments((prev) => [...newDocs, ...prev]);
-      toast({
-        title: "Documents uploaded",
-        description: `${files.length} document${files.length > 1 ? "s" : ""} indexed successfully`,
-      });
+    async (files: File[]) => {
+      try {
+        const uploadPromises = files.map((file) => api.uploadDocument(file));
+        const newDocs = await Promise.all(uploadPromises);
+        
+        setDocuments((prev) => [...prev, ...newDocs]);
+        toast({
+          title: "Documents uploaded",
+          description: `${files.length} document${files.length > 1 ? "s" : ""} indexed successfully`,
+        });
+        loadDocuments(); // Reload to get fresh list
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: "One or more files failed to upload",
+          variant: "destructive",
+        });
+      }
     },
     [toast]
   );
 
+  /**
+   * Handles document deletion.
+   * Removes the document from the list and clears selection if needed.
+   */
   const handleDeleteDocument = useCallback(
-    (id: string) => {
-      setDocuments((prev) => prev.filter((doc) => doc.id !== id));
-      if (selectedDocument?.id === id) {
-        setSelectedDocument(null);
-        setMessages([]);
+    async (id: string) => {
+      try {
+        await api.deleteDocument(id);
+        setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+        if (selectedDocument?.id === id) {
+          setSelectedDocument(null);
+          setMessages([]);
+        }
+        toast({
+          title: "Document deleted",
+          description: "The document has been removed from the index",
+        });
+      } catch (error) {
+        toast({
+          title: "Delete failed",
+          description: "Could not delete document",
+          variant: "destructive",
+        });
       }
-      toast({
-        title: "Document deleted",
-        description: "The document has been removed from the index",
-      });
     },
     [selectedDocument, toast]
   );
 
-  const handleSendMessage = useCallback((content: string) => {
+  /**
+   * Handles sending a message in the chat interface.
+   * 1. Adds the user's message to the state immediately (Optimistic UI).
+   * 2. Calls the backend API to get the AI response.
+   * 3. Adds the AI's response to the state.
+   */
+  const handleSendMessage = useCallback(async (content: string) => {
     // Add user message
     const userMessage: Message = {
       id: `msg-${Date.now()}`,
@@ -93,26 +132,30 @@ const Index = () => {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const answer = await api.chat(content);
+      
       const aiMessage: Message = {
         id: `msg-${Date.now()}-ai`,
         role: "assistant",
-        content: `Based on the document, here's what I found regarding your question about "${content}":\n\nThis is a simulated response. In a real implementation, this would be the answer generated by your RAG pipeline and LLM, pulling relevant information from the vector database and generating a comprehensive response.\n\nThe response would include citations and references to specific sections of the document.`,
+        content: answer,
         timestamp: new Date(),
-        sources: [
-          { page: 12, excerpt: "Relevant section from page 12..." },
-          { page: 45, excerpt: "Supporting information from page 45..." },
-        ],
       };
       setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      toast({
+        title: "Chat failed",
+        description: "Could not get response from AI",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 2000);
-  }, []);
+    }
+  }, [toast]);
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-accent/20">
-      {/* Sidebar */}
+      {/* Sidebar for document management */}
       <DocumentSidebar
         documents={documents}
         selectedDocument={selectedDocument}
@@ -123,7 +166,7 @@ const Index = () => {
         onSearchChange={setSearchQuery}
       />
 
-      {/* Main Chat Area */}
+      {/* Main Chat Interface */}
       <ChatInterface
         document={selectedDocument}
         messages={messages}
@@ -131,7 +174,7 @@ const Index = () => {
         isLoading={isLoading}
       />
 
-      {/* Upload Modal */}
+      {/* Modal for file uploads */}
       <UploadModal
         open={uploadModalOpen}
         onOpenChange={setUploadModalOpen}

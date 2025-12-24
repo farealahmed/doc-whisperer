@@ -6,15 +6,29 @@ import { Document } from "@/types/document";
 import { cn } from "@/lib/utils";
 
 interface DocumentSidebarProps {
+  /** List of available documents */
   documents: Document[];
+  /** Currently active document */
   selectedDocument: Document | null;
+  /** Callback when a document is clicked */
   onSelectDocument: (doc: Document) => void;
+  /** Callback to trigger upload modal */
   onUploadClick: () => void;
+  /** Callback to delete a document */
   onDeleteDocument: (id: string) => void;
+  /** Current search filter text */
   searchQuery: string;
+  /** Callback to update search filter */
   onSearchChange: (query: string) => void;
 }
 
+/**
+ * Sidebar Component for Document Management.
+ * <p>
+ * Displays a list of uploaded documents with search functionality.
+ * Allows users to select, upload, and delete documents.
+ * </p>
+ */
 export function DocumentSidebar({
   documents,
   selectedDocument,

@@ -8,6 +8,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,21 +20,39 @@ import java.util.stream.StreamSupport;
 
 /**
  * Service class that handles the core business logic for documents.
- * It coordinates file parsing, vector embedding, and database storage.
+ * <p>
+ * It coordinates the following operations:
+ * <ul>
+ *     <li>Parsing uploaded files (PDF/DOCX) using Apache Tika.</li>
+ *     <li>Splitting text into chunks and generating vector embeddings.</li>
+ *     <li>Ingesting data into the Vector Store (PostgreSQL with pgvector).</li>
+ *     <li>Managing document metadata in the relational database.</li>
+ * </ul>
+ * </p>
  */
 @Service
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
     private final EmbeddingStoreIngestor ingestor;
+    private final JdbcTemplate jdbcTemplate;
 
-    // Constructor injection of dependencies
+    /**
+     * Constructor injection of dependencies.
+     *
+     * @param documentRepository The DAO for document metadata.
+     * @param embeddingModel     The model used to generate vector embeddings.
+     * @param embeddingStore     The vector database for storing embeddings.
+     * @param jdbcTemplate       Spring JDBC template for executing direct SQL queries.
+     */
     public DocumentService(
             DocumentRepository documentRepository,
             EmbeddingModel embeddingModel,
-            EmbeddingStore<TextSegment> embeddingStore
+            EmbeddingStore<TextSegment> embeddingStore,
+            JdbcTemplate jdbcTemplate
     ) {
         this.documentRepository = documentRepository;
+        this.jdbcTemplate = jdbcTemplate;
         
         // The Ingestor automatically:
         // 1. Splits text into chunks
@@ -48,9 +67,15 @@ public class DocumentService {
 
     /**
      * Processes an uploaded file:
-     * 1. Parses text from PDF/DOCX using Apache Tika.
-     * 2. Ingests text into Vector DB.
-     * 3. Saves metadata to Postgres.
+     * <ol>
+     *     <li>Parses text from PDF/DOCX using Apache Tika.</li>
+     *     <li>Ingests text into Vector DB (splits, embeds, stores).</li>
+     *     <li>Saves metadata to Postgres 'document' table.</li>
+     * </ol>
+     *
+     * @param file The uploaded file.
+     * @return The saved Document metadata.
+     * @throws IOException If file reading fails.
      */
     public Document store(MultipartFile file) throws IOException {
         // 1. Parse Document using Tika
@@ -77,12 +102,31 @@ public class DocumentService {
         return documentRepository.save(docEntity);
     }
 
+    /**
+     * Retrieves all documents from the metadata database.
+     * @return List of all documents.
+     */
     public List<Document> getAllDocuments() {
         return StreamSupport.stream(documentRepository.findAll().spliterator(), false).toList();
     }
     
+    /**
+     * Deletes a document by ID.
+     * <p>
+     * This method performs a cascading delete:
+     * 1. Removes all vector embeddings associated with the document ID from the 'embeddings' table.
+     * 2. Removes the document metadata from the 'document' table.
+     * </p>
+     *
+     * @param id The document ID to delete.
+     */
     public void deleteDocument(String id) {
-        // TODO: Also delete vectors from embedding store (requires advanced filter support)
+        // 1. Delete vectors from Embedding Store (Vector DB)
+        // Using direct SQL because EmbeddingStore interface might not expose filter deletion in this version
+        String deleteSql = "DELETE FROM embeddings WHERE metadata ->> 'documentId' = ?";
+        jdbcTemplate.update(deleteSql, id);
+        
+        // 2. Delete metadata from Relational DB
         documentRepository.deleteById(id);
     }
 }

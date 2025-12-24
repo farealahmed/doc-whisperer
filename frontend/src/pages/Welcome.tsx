@@ -2,6 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { FileText, MessageSquare, Sparkles, ArrowRight, Zap, Shield, Search } from "lucide-react";
 
+/**
+ * Landing Page Component.
+ * <p>
+ * This is the first page users see when they visit the application.
+ * It features:
+ * <ul>
+ *   <li>A welcome hero section with value proposition</li>
+ *   <li>Feature highlights (Smart Search, Instant Answers, Security)</li>
+ *   <li>"Get Started" call-to-action that navigates to the main app (/app)</li>
+ * </ul>
+ * It uses a decorative background with gradients and floating elements.
+ * </p>
+ */
 const Welcome = () => {
   const navigate = useNavigate();
 

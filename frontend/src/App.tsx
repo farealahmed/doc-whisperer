@@ -9,6 +9,18 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+/**
+ * Root Application Component.
+ * <p>
+ * Sets up global providers:
+ * <ul>
+ *   <li>QueryClientProvider: For TanStack Query (data fetching)</li>
+ *   <li>TooltipProvider: For UI tooltips</li>
+ *   <li>Toaster/Sonner: For notification toasts</li>
+ *   <li>BrowserRouter: For client-side routing</li>
+ * </ul>
+ * </p>
+ */
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
