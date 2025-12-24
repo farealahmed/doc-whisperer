@@ -56,7 +56,7 @@ export function DocumentSidebar({
   };
 
   return (
-    <div className="flex h-full w-72 flex-col border-r border-border bg-card/80 backdrop-blur-sm">
+    <div className="flex h-full w-80 flex-col border-r border-border bg-card/80 backdrop-blur-sm">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-4">
         <h2 className="font-display text-lg font-semibold text-foreground">
@@ -114,6 +114,18 @@ export function DocumentSidebar({
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => onSelectDocument(doc)}
               >
+                {/* Delete Button (Moved to Left for Visibility Check) */}
+                <div 
+                  className="mr-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-red-500 text-white hover:bg-red-600 z-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteDocument(doc.id);
+                  }}
+                  title="Delete Document"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </div>
+
                 {/* Document Icon */}
                 <div
                   className={cn(
@@ -127,23 +139,11 @@ export function DocumentSidebar({
                 </div>
                 
                 {/* Document Info */}
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1" title={doc.name}>
                   <p className="truncate text-sm font-medium">{doc.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatFileSize(doc.size)} • {formatDate(doc.uploadedAt)}
                   </p>
-                </div>
-                
-                {/* Delete Button (Explicitly Visible) */}
-                <div 
-                  className="flex h-8 w-8 items-center justify-center rounded-md bg-red-100 text-red-600 hover:bg-red-200"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteDocument(doc.id);
-                  }}
-                  title="Delete Document"
-                >
-                  <Trash2 className="h-4 w-4" />
                 </div>
               </div>
             ))
