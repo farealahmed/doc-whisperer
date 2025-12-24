@@ -10,41 +10,41 @@ What it will do:
   - Calls chatAgent.answer(question) .
   - Returns the AI's response string. */
 
-import com.docwhisperer.backend.services.ChatAgent;
+import com.docwhisperer.backend.services.ChatService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/chat")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 /**
  * REST Controller for handling chat interactions.
  * <p>
  * This controller exposes endpoints to interact with the AI assistant.
- * It acts as a bridge between the frontend React application and the backend {@link ChatAgent}.
+ * It acts as a bridge between the frontend React application and the backend {@link ChatService}.
  * </p>
  */
 public class ChatController {
 
-    private final ChatAgent chatAgent;
+    private final ChatService chatService;
 
     /**
-     * Constructor injection for the ChatAgent service.
-     * @param chatAgent The AI service responsible for generating answers.
+     * Constructor injection for the ChatService.
+     * @param chatService The AI service responsible for generating answers.
      */
-    public ChatController(ChatAgent chatAgent) {
-        this.chatAgent = chatAgent;
+    public ChatController(ChatService chatService) {
+        this.chatService = chatService;
     }
 
     /**
      * Processes a chat message from the user.
      * <p>
-     * This endpoint receives a user's question, sends it to the RAG pipeline (ChatAgent),
+     * This endpoint receives a user's question, sends it to the RAG pipeline (ChatService),
      * and returns the AI's response.
      * </p>
      *
-     * @param payload A map containing the "question" key.
+     * @param payload A map containing the "question" key and optional "documentId".
      * @return A map containing the "answer" key with the AI's response.
      * @throws IllegalArgumentException if the question is missing or empty.
      */
@@ -55,7 +55,9 @@ public class ChatController {
              throw new IllegalArgumentException("Question cannot be empty");
         }
         
-        String answer = chatAgent.answer(question);
+        String documentId = payload.get("documentId");
+        
+        String answer = chatService.answer(question, documentId);
         return Map.of("answer", answer);
     }
 }

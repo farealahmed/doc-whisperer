@@ -114,6 +114,7 @@ export function DocumentSidebar({
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => onSelectDocument(doc)}
               >
+                {/* Document Icon */}
                 <div
                   className={cn(
                     "flex h-9 w-9 shrink-0 items-center justify-center rounded-md",
@@ -124,23 +125,26 @@ export function DocumentSidebar({
                 >
                   <FileText className="h-4 w-4" />
                 </div>
+                
+                {/* Document Info */}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{doc.name}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatFileSize(doc.size)} • {formatDate(doc.uploadedAt)}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+                
+                {/* Delete Button (Explicitly Visible) */}
+                <div 
+                  className="flex h-8 w-8 items-center justify-center rounded-md bg-red-100 text-red-600 hover:bg-red-200"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDeleteDocument(doc.id);
                   }}
+                  title="Delete Document"
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button>
+                </div>
               </div>
             ))
           )}

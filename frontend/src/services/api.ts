@@ -82,15 +82,16 @@ export const api = {
    * and generates an answer using the LLM.
    * </p>
    * @param question The user's question string
+   * @param documentId The ID of the document to query (optional context)
    * @returns Promise<string> The plain text answer from the AI
    */
-  chat: async (question: string): Promise<string> => {
+  chat: async (question: string, documentId?: string): Promise<string> => {
     const response = await fetch(`${API_BASE}/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, documentId }),
     });
 
     if (!response.ok) throw new Error("Failed to send message");

@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/documents")
-@CrossOrigin(origins = "http://localhost:5173") // Allow requests from React frontend
+@CrossOrigin(origins = "*") // Allow requests from any frontend (React, curl, etc.)
 /**
  * REST Controller for managing documents.
  * <p>

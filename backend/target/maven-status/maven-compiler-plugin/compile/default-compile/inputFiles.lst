@@ -4,5 +4,5 @@
 /Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/controllers/DocumentController.java
 /Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/documents/Document.java
 /Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/repositories/DocumentRepository.java
-/Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/services/ChatAgent.java
+/Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/services/ChatService.java
 /Users/fareal/moname/Repository/doc-whisperer/backend/src/main/java/com/docwhisperer/backend/services/DocumentService.java

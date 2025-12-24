@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS document (
 );
 
 CREATE TABLE IF NOT EXISTS embeddings (
-    id UUID PRIMARY KEY,
+    embedding_id UUID PRIMARY KEY,
     embedding vector(384),
     text TEXT,
     metadata JSONB

@@ -8,6 +8,8 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +34,8 @@ import java.util.stream.StreamSupport;
  */
 @Service
 public class DocumentService {
+
+    private static final Logger log = LoggerFactory.getLogger(DocumentService.class);
 
     private final DocumentRepository documentRepository;
     private final EmbeddingStoreIngestor ingestor;
@@ -78,16 +82,21 @@ public class DocumentService {
      * @throws IOException If file reading fails.
      */
     public Document store(MultipartFile file) throws IOException {
+        log.info("Processing upload for file: {}", file.getOriginalFilename());
+
         // 1. Parse Document using Tika
         var parser = new ApacheTikaDocumentParser();
         var document = parser.parse(file.getInputStream());
+        log.info("Parsed text length: {} chars", document.text().length());
         
         // 2. Assign metadata ID to link vectors to this document
         String docId = UUID.randomUUID().toString();
         document.metadata().put("documentId", docId);
         
         // 3. Ingest (Split -> Embed -> Store Vectors)
+        log.info("Starting ingestion into vector store...");
         ingestor.ingest(document);
+        log.info("Ingestion completed for documentId: {}", docId);
 
         // 4. Save Metadata to DB
         Document docEntity = new Document(

@@ -1,5 +1,5 @@
+com/docwhisperer/backend/services/ChatService.class
 com/docwhisperer/backend/documents/Document.class
-com/docwhisperer/backend/services/ChatAgent.class
 com/docwhisperer/backend/controllers/DocumentController.class
 com/docwhisperer/backend/BackendApplication.class
 com/docwhisperer/backend/controllers/ChatController.class

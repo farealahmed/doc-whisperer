@@ -133,7 +133,7 @@ const Index = () => {
     setIsLoading(true);
 
     try {
-      const answer = await api.chat(content);
+      const answer = await api.chat(content, selectedDocument?.id);
       
       const aiMessage: Message = {
         id: `msg-${Date.now()}-ai`,
@@ -151,7 +151,7 @@ const Index = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [selectedDocument, toast]);
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-background via-background to-accent/20">
