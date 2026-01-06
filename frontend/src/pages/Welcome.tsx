@@ -61,7 +61,7 @@ const Welcome = () => {
 
             {/* Subtitle */}
             <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-              Upload PDFs, research papers, or any document. Ask questions and get accurate, 
+              Upload PDFs/ DOCXs, research papers, or any document. Ask questions and get accurate, 
               context-aware answers with source citations in seconds.
             </p>
 

@@ -85,7 +85,7 @@ public class DocumentService {
         log.info("Processing upload for file: {}", file.getOriginalFilename());
 
         // 1. Parse Document using Tika
-        var parser = new ApacheTikaDocumentParser();
+        ApacheTikaDocumentParser parser = new ApacheTikaDocumentParser();
         var document = parser.parse(file.getInputStream());
         log.info("Parsed text length: {} chars", document.text().length());
         

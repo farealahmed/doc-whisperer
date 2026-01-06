@@ -1,5 +1,6 @@
 package com.docwhisperer.backend.services;
 
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.data.segment.TextSegment;
@@ -72,7 +73,7 @@ public class ChatService {
                 }
             }
             // 1. Embed the user's question
-            var questionEmbedding = embeddingModel.embed(question).content();
+            Embedding questionEmbedding = embeddingModel.embed(question).content();
 
             // 2. Build Filter (if documentId is provided)
             Filter filter = null;
