@@ -20,6 +20,7 @@
 - [Running the Application](#-running-the-application)
 - [How It Works](#-how-it-works)
 - [API Documentation](#-api-documentation)
+- [Testing](#-testing)
 - [Project Structure](#-project-structure)
 - [Configuration](#-configuration)
 - [Troubleshooting](#-troubleshooting)
@@ -350,6 +351,24 @@ Response: 200 OK
 {
   "answer": "The main topic of the document is..."
 }
+```
+
+---
+
+## 🧪 Testing
+
+### Run Unit Tests
+
+#### ChatService Unit Tests
+```bash
+cd backend
+./mvnw test -Dtest=ChatServiceTest -q
+```
+
+#### Run All Tests
+```bash
+cd backend
+./mvnw test
 ```
 
 ---
