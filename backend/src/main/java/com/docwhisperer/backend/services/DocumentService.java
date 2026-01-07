@@ -38,7 +38,8 @@ public class DocumentService {
     private static final Logger log = LoggerFactory.getLogger(DocumentService.class);
 
     private final DocumentRepository documentRepository;
-    private final EmbeddingStoreIngestor ingestor;
+    private final EmbeddingModel embeddingModel;
+    private final EmbeddingStore<TextSegment> embeddingStore;
     private final JdbcTemplate jdbcTemplate;
 
     /**
@@ -56,17 +57,9 @@ public class DocumentService {
             JdbcTemplate jdbcTemplate
     ) {
         this.documentRepository = documentRepository;
+        this.embeddingModel = embeddingModel;
+        this.embeddingStore = embeddingStore;
         this.jdbcTemplate = jdbcTemplate;
-        
-        // The Ingestor automatically:
-        // 1. Splits text into chunks
-        // 2. Converts chunks to vectors (using embeddingModel)
-        // 3. Saves vectors to DB (using embeddingStore)
-        this.ingestor = EmbeddingStoreIngestor.builder()
-                .documentSplitter(DocumentSplitters.recursive(500, 50)) // Split into 500-char chunks
-                .embeddingModel(embeddingModel)
-                .embeddingStore(embeddingStore)
-                .build();
     }
 
     /**
@@ -91,9 +84,20 @@ public class DocumentService {
         
         // 2. Assign metadata ID to link vectors to this document
         String docId = UUID.randomUUID().toString();
-        document.metadata().put("documentId", docId);
-        
-        // 3. Ingest (Split -> Embed -> Store Vectors)
+
+        // 3. Create ingestor with textSegmentTransformer to propagate documentId to each chunk
+        // This is critical for filtering by documentId during retrieval
+        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
+                .documentSplitter(DocumentSplitters.recursive(500, 50))
+                .embeddingModel(embeddingModel)
+                .embeddingStore(embeddingStore)
+                .textSegmentTransformer(segment -> {
+                    segment.metadata().put("documentId", docId);
+                    return segment;
+                })
+                .build();
+
+        // 4. Ingest (Split -> Embed -> Store Vectors with documentId metadata)
         log.info("Starting ingestion into vector store...");
         ingestor.ingest(document);
         log.info("Ingestion completed for documentId: {}", docId);
