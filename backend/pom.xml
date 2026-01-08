@@ -115,6 +115,13 @@ We are using LangChain4j , which is the Java version of the popular LangChain li
 			<version>2.9.1</version>
 		</dependency>
 
+		<!-- OpenAPI / Swagger Documentation -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.7.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

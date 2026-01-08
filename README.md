@@ -107,6 +107,7 @@ Doc Whisperer uses a **RAG (Retrieval-Augmented Generation)** pipeline:
 - **Embeddings**: all-MiniLM-L6-v2 (384 dimensions)
 - **Database**: PostgreSQL 16 with pgvector extension
 - **Document Parsing**: Apache Tika
+- **API Documentation**: OpenAPI 3 / Swagger UI
 - **Build Tool**: Maven
 
 ### Frontend
@@ -285,6 +286,26 @@ http://localhost:5173
 ---
 
 ## 🔌 API Documentation
+
+### Interactive API Documentation (Swagger UI)
+
+The application includes **interactive API documentation** powered by OpenAPI 3 and Swagger UI.
+
+**Access Swagger UI:**
+```
+http://localhost:8080/swagger-ui.html
+```
+
+**OpenAPI Specification:**
+```
+http://localhost:8080/v3/api-docs
+```
+
+Swagger UI provides:
+- 📝 Complete API documentation with request/response schemas
+- 🧪 Interactive testing - Try out endpoints directly from the browser
+- 📋 Auto-generated from your code - Always up-to-date
+- 🔍 Detailed parameter descriptions and examples
 
 ### Base URL
 ```
